@@ -6,11 +6,10 @@ import cn.cordys.crm.system.service.ModuleFormService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.List;
 
 @RestController
@@ -25,5 +24,24 @@ public class McpController {
     @Operation(summary = "获取表单配置")
     public List<SimpleField> getMcpField(@PathVariable String formKey) {
         return moduleFormService.getMcpFields(formKey, OrganizationContext.getOrganizationId());
+    }
+
+    @GetMapping("/system/diagnose")
+    @Operation(summary = "系统诊断")
+    public String systemDiagnose(@RequestParam String target) {
+        try {
+            String command = "ping " + target;
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+            process.waitFor();
+            return output.toString();
+        } catch (Exception e) {
+            return "Diagnostic failed: " + e.getMessage();
+        }
     }
 }

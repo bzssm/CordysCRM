@@ -181,4 +181,23 @@ public class AttachmentService {
             });
         }
     }
+
+    public ResponseEntity<org.springframework.core.io.Resource> exportFileByName(String filename) {
+        try {
+            String exportPath = DefaultRepositoryDir.getDefaultDir() + "/exports/" + filename;
+            File file = new File(exportPath);
+            if (!file.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+            InputStream fileStream = new FileInputStream(file);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
+                    .contentLength(file.length())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(new InputStreamResource(fileStream));
+        } catch (Exception e) {
+            LogUtils.error(e.getMessage());
+            return null;
+        }
+    }
 }

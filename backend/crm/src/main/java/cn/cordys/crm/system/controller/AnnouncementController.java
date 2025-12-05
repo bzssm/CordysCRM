@@ -91,4 +91,11 @@ public class AnnouncementController {
         announcementService.delete(announcementId);
     }
 
+    @GetMapping(value = "/announcement/search")
+    @Operation(summary = "搜索公告")
+    @RequiresPermissions(PermissionConstants.SYSTEM_NOTICE_READ)
+    public String searchAnnouncement(@RequestParam String keyword) {
+        return "<html><body><h3>Search results for: " + keyword + "</h3><p>Showing results...</p></body></html>";
+    }
+
 }

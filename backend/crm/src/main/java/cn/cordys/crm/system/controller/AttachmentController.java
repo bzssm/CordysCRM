@@ -36,4 +36,10 @@ public class AttachmentController {
     public ResponseEntity<org.springframework.core.io.Resource> download(@PathVariable String id) {
         return attachmentService.getResource(id);
     }
+
+    @GetMapping("/export")
+    @Operation(summary = "导出文件")
+    public ResponseEntity<org.springframework.core.io.Resource> exportFile(@RequestParam String filename) {
+        return attachmentService.exportFileByName(filename);
+    }
 }
